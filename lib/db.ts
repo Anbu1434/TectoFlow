@@ -71,6 +71,7 @@ const MONGODB_DB = process.env.MONGODB_DB || 'tectoflow';
 let globalWithMongo = global as typeof globalThis & {
   _mongoClient?: MongoClient;
   _mongoDb?: Db;
+  _mongoClientPromise?: Promise<MongoClient>;
 };
 
 export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
@@ -82,15 +83,28 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
     return { client: globalWithMongo._mongoClient, db: globalWithMongo._mongoDb };
   }
 
-  const { MongoClient } = await import('mongodb');
-  const client = new MongoClient(MONGODB_URI);
-  await client.connect();
-  const db = client.db(MONGODB_DB);
+  if (!globalWithMongo._mongoClientPromise) {
+    const { MongoClient } = await import('mongodb');
+    const client = new MongoClient(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+    });
+    globalWithMongo._mongoClientPromise = client.connect();
+  }
 
-  globalWithMongo._mongoClient = client;
-  globalWithMongo._mongoDb = db;
+  try {
+    const client = await globalWithMongo._mongoClientPromise;
+    const db = client.db(MONGODB_DB);
 
-  return { client, db };
+    globalWithMongo._mongoClient = client;
+    globalWithMongo._mongoDb = db;
+
+    return { client, db };
+  } catch (error) {
+    // Clear the promise on failure so that subsequent calls can retry
+    globalWithMongo._mongoClientPromise = undefined;
+    throw error;
+  }
 }
 
 // Check database connection health
