@@ -57,9 +57,9 @@ export async function generateMetadata(): Promise<Metadata> {
       creator: '@tectoflowstudio',
     },
     icons: {
-      icon: '/icon',
-      shortcut: '/icon',
-      apple: '/icon',
+      icon: siteConfig.logoUrl || '/icon',
+      shortcut: siteConfig.logoUrl || '/icon',
+      apple: siteConfig.logoUrl || '/icon',
     },
     robots: {
       index: true,
