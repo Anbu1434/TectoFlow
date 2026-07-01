@@ -72,11 +72,19 @@ let globalWithMongo = global as typeof globalThis & {
   _mongoClient?: MongoClient;
   _mongoDb?: Db;
   _mongoClientPromise?: Promise<MongoClient>;
+  _lastConnectFailureTime?: number;
 };
+
+const CONNECTION_COOLDOWN_MS = 30000; // 30 seconds
 
 export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
   if (!MONGODB_URI) {
     throw new Error('MONGODB_URI environment variable is not defined');
+  }
+
+  // If a connection failed recently, fail fast instantly without attempting to connect again
+  if (globalWithMongo._lastConnectFailureTime && (Date.now() - globalWithMongo._lastConnectFailureTime < CONNECTION_COOLDOWN_MS)) {
+    throw new Error('MongoDB connection is in cooldown after a recent failure');
   }
 
   if (globalWithMongo._mongoClient && globalWithMongo._mongoDb) {
@@ -99,9 +107,14 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
     globalWithMongo._mongoClient = client;
     globalWithMongo._mongoDb = db;
 
+    // Clear any previous failure time on success
+    globalWithMongo._lastConnectFailureTime = undefined;
+
     return { client, db };
   } catch (error) {
-    // Clear the promise on failure so that subsequent calls can retry
+    // Record failure time and clear promise so that we don't hold a rejected promise forever,
+    // but the cooldown check above will prevent immediate retries.
+    globalWithMongo._lastConnectFailureTime = Date.now();
     globalWithMongo._mongoClientPromise = undefined;
     throw error;
   }
