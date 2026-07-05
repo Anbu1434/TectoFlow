@@ -41,6 +41,16 @@ import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast, Toaster } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 // Reusable Image Uploader Component
 function ImageUploader({
@@ -208,6 +218,26 @@ export default function AdminDashboardPage() {
   const [editingProject, setEditingProject] = React.useState<any | null>(null);
   const [projectDialogOpen, setProjectDialogOpen] = React.useState(false);
 
+  // Custom confirmation dialog state
+  const [confirmConfig, setConfirmConfig] = React.useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+  } | null>(null);
+
+  function requestConfirm(title: string, description: string, onConfirm: () => void) {
+    setConfirmConfig({
+      isOpen: true,
+      title,
+      description,
+      onConfirm: () => {
+        onConfirm();
+        setConfirmConfig(null);
+      }
+    });
+  }
+
   async function loadData() {
     setLoading(true);
     try {
@@ -242,9 +272,11 @@ export default function AdminDashboardPage() {
   }
 
   async function handleDeleteContact(id: string) {
-    if (confirm('Delete this inquiry?')) {
-      await saveSection('contact', { id }, 'delete');
-    }
+    requestConfirm(
+      'Delete Inquiry',
+      'Are you sure you want to permanently delete this contact inquiry?',
+      () => saveSection('contact', { id }, 'delete')
+    );
   }
 
   async function handleSendReply(contact: any) {
@@ -289,9 +321,11 @@ export default function AdminDashboardPage() {
   }
 
   async function handleDeleteSubscriber(id: string) {
-    if (confirm('Delete this newsletter subscriber?')) {
-      await saveSection('newsletter', { id }, 'delete');
-    }
+    requestConfirm(
+      'Delete Subscriber',
+      'Are you sure you want to delete this newsletter subscriber?',
+      () => saveSection('newsletter', { id }, 'delete')
+    );
   }
 
   async function handleSendNewsletter(e: React.FormEvent) {
@@ -301,39 +335,41 @@ export default function AdminDashboardPage() {
       return;
     }
 
-    if (!confirm(`Are you sure you want to broadcast this newsletter to all ${subscribers.length} subscribers?`)) {
-      return;
-    }
+    requestConfirm(
+      'Broadcast Newsletter',
+      `Are you sure you want to broadcast this newsletter to all ${subscribers.length} subscribers? This action cannot be undone.`,
+      async () => {
+        setSendingNewsletter(true);
+        try {
+          const res = await fetch('/api/admin/content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'newsletter',
+              action: 'send',
+              data: {
+                subject: newsletterSubject,
+                body: newsletterBody,
+              },
+            }),
+          });
 
-    setSendingNewsletter(true);
-    try {
-      const res = await fetch('/api/admin/content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'newsletter',
-          action: 'send',
-          data: {
-            subject: newsletterSubject,
-            body: newsletterBody,
-          },
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        toast.success(`Newsletter broadcasted successfully to ${data.data?.count || subscribers.length} subscribers!`);
-        setNewsletterSubject('');
-        setNewsletterBody('');
-      } else {
-        const err = await res.json();
-        throw new Error(err.error || 'Failed to broadcast newsletter');
+          if (res.ok) {
+            const data = await res.json();
+            toast.success(`Newsletter broadcasted successfully to ${data.data?.count || subscribers.length} subscribers!`);
+            setNewsletterSubject('');
+            setNewsletterBody('');
+          } else {
+            const err = await res.json();
+            throw new Error(err.error || 'Failed to broadcast newsletter');
+          }
+        } catch (err: any) {
+          toast.error(err.message || 'Error broadcasting newsletter');
+        } finally {
+          setSendingNewsletter(false);
+        }
       }
-    } catch (err: any) {
-      toast.error(err.message || 'Error broadcasting newsletter');
-    } finally {
-      setSendingNewsletter(false);
-    }
+    );
   }
 
   React.useEffect(() => {
@@ -811,9 +847,11 @@ export default function AdminDashboardPage() {
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => {
-                                      if (confirm(`Delete project "${project.title}"?`)) {
-                                        saveSection('project', project, 'delete');
-                                      }
+                                      requestConfirm(
+                                        'Delete Project',
+                                        `Are you sure you want to delete project "${project.title}"? This cannot be undone.`,
+                                        () => saveSection('project', project, 'delete')
+                                      );
                                     }}
                                     className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
                                   >
@@ -834,17 +872,86 @@ export default function AdminDashboardPage() {
             {/* SERVICES CAPABILITIES */}
             <TabsContent value="services" className="space-y-6 m-0 border-0 p-0 focus-visible:ring-0">
               <Card className="border-border/60 bg-card/40 backdrop-blur-md">
-                <CardHeader>
-                  <CardTitle className="font-display text-xl font-bold tracking-tight">Our Capabilities</CardTitle>
-                  <CardDescription>Edit capabilities list, descriptions, prices, and deliverables lists.</CardDescription>
+                <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <CardTitle className="font-display text-xl font-bold tracking-tight">Our Capabilities</CardTitle>
+                    <CardDescription>Edit capabilities list, descriptions, prices, and deliverables lists.</CardDescription>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setServices([
+                        {
+                          title: 'New Service',
+                          slug: 'new-service-' + Date.now().toString().slice(-4),
+                          startingPrice: '$20k',
+                          short: '',
+                          icon: 'Palette',
+                          description: '',
+                          deliverables: []
+                        },
+                        ...(services || [])
+                      ]);
+                      toast.success('New service added at the top of the list!');
+                    }}
+                    className="rounded-lg bg-accent hover:bg-accent/90 font-semibold gap-1.5 h-10 shrink-0 self-start sm:self-center"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Service
+                  </Button>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {services.map((service, sIndex) => (
-                    <div key={service.slug} className="p-5 rounded-2xl border border-border bg-background/30 space-y-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <h4 className="font-display text-base font-bold text-accent">{service.title} ({service.slug})</h4>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground uppercase font-semibold">Starting Price:</span>
+                    <div key={sIndex} className="p-5 rounded-2xl border border-border bg-background/30 space-y-4">
+                      <div className="flex justify-between items-center border-b border-border/40 pb-2">
+                        <span className="text-sm font-bold text-accent uppercase">Service #{sIndex + 1}: {service.title || 'Untitled Service'}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            requestConfirm(
+                              'Delete Service',
+                              `Are you sure you want to delete service "${service.title || 'Untitled'}"?`,
+                              () => {
+                                const updated = services.filter((_, idx) => idx !== sIndex);
+                                setServices(updated);
+                              }
+                            );
+                          }}
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-3">
+                        <div className="space-y-1">
+                          <label className="text-xs text-muted-foreground uppercase font-semibold">Service Title</label>
+                          <Input
+                            value={service.title || ''}
+                            onChange={(e) => {
+                              const updated = [...services];
+                              updated[sIndex].title = e.target.value;
+                              setServices(updated);
+                            }}
+                            className="rounded-lg"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs text-muted-foreground uppercase font-semibold">Slug</label>
+                          <Input
+                            value={service.slug || ''}
+                            onChange={(e) => {
+                              const updated = [...services];
+                              updated[sIndex].slug = e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '-');
+                              setServices(updated);
+                            }}
+                            placeholder="service-slug"
+                            className="rounded-lg font-mono text-xs"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs text-muted-foreground uppercase font-semibold">Starting Price</label>
                           <Input
                             value={service.startingPrice || ''}
                             onChange={(e) => {
@@ -853,10 +960,11 @@ export default function AdminDashboardPage() {
                               setServices(updated);
                             }}
                             placeholder="$20k"
-                            className="rounded-lg w-28 h-8"
+                            className="rounded-lg"
                           />
                         </div>
                       </div>
+
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-1">
                           <label className="text-xs text-muted-foreground uppercase font-semibold">Short Subtitle</label>
@@ -2289,6 +2397,24 @@ export default function AdminDashboardPage() {
 
       {/* Dynamic Sonner Toaster */}
       <Toaster position="bottom-right" richColors />
+
+      {/* Reusable Custom Alert Dialog Confirmation Card */}
+      {confirmConfig && (
+        <AlertDialog open={!!confirmConfig.isOpen} onOpenChange={(open) => {
+          if (!open) setConfirmConfig(null);
+        }}>
+          <AlertDialogContent className="border-border/60 bg-card/95 backdrop-blur-md max-w-[400px]">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="font-display text-lg font-bold tracking-tight text-foreground">{confirmConfig.title}</AlertDialogTitle>
+              <AlertDialogDescription className="text-muted-foreground text-sm leading-relaxed">{confirmConfig.description}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="mt-4 flex gap-2 justify-end">
+              <AlertDialogCancel className="rounded-lg h-9" onClick={() => setConfirmConfig(null)}>Cancel</AlertDialogCancel>
+              <AlertDialogAction className="rounded-lg h-9 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => confirmConfig.onConfirm()}>Confirm</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </div>
   );
 }

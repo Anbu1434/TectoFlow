@@ -125,13 +125,13 @@ export function Navbar({ siteConfig = defaultSiteConfig }: { siteConfig?: any })
               className="flex items-center gap-2"
             >
               {siteConfig.logoUrl ? (
-                <div className="relative h-8 w-8 overflow-hidden rounded-full md:h-10 md:w-10 border border-border/40 bg-card">
+                <div className="relative h-8 w-8 md:h-10 md:w-10">
                   <Image
                     src={siteConfig.logoUrl}
                     alt={siteConfig.name}
                     fill
                     sizes="(max-width: 768px) 32px, 40px"
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                 </div>
               ) : (
