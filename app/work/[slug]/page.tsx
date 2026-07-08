@@ -51,7 +51,7 @@ export default async function CaseStudyPage({
   return (
     <article className="min-h-screen bg-background">
       {/* Immersive Hero Backdrop */}
-      <div className="relative h-[50vh] sm:h-[60vh] lg:h-[65vh] w-full overflow-hidden border-b border-border/40">
+      <div className="relative min-h-[50vh] sm:min-h-[60vh] lg:min-h-[65vh] w-full overflow-hidden border-b border-border/40">
         <div className="absolute inset-0 z-0">
           <Image
             src={project.cover}
@@ -64,16 +64,18 @@ export default async function CaseStudyPage({
           <div className="absolute inset-0 bg-mesh-dark dark:opacity-100 opacity-60 pointer-events-none" />
         </div>
 
-        <Container className="relative z-10 flex h-full flex-col justify-end pb-28 sm:pb-36 lg:pb-40">
+        <Container className="relative z-10 flex min-h-[inherit] flex-col pt-28 sm:pt-32 lg:pt-36 pb-32 sm:pb-44 lg:pb-52">
           <Reveal>
             <Link
               href="/work"
-              className="group mb-6 inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-muted-foreground transition-colors hover:text-foreground"
+              className="group inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-4 py-2 text-sm font-semibold tracking-wide text-muted-foreground backdrop-blur-md transition-colors hover:border-accent/40 hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
               Back to work
             </Link>
-            <div className="flex flex-wrap items-center gap-3">
+          </Reveal>
+          <Reveal className="mt-auto">
+            <div className="flex flex-wrap items-center gap-3 pt-10">
               <Badge variant="secondary" className="bg-accent/10 text-accent hover:bg-accent/20 border-accent/20">
                 {project.category}
               </Badge>

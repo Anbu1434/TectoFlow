@@ -4,7 +4,6 @@ import { ArrowUpRight } from 'lucide-react';
 import { getFeaturedProjects as defaultGetFeaturedProjects } from '@/lib/projects';
 import { Section, SectionHeader } from '@/components/site/section';
 import { Reveal } from '@/components/site/reveal';
-import { Badge } from '@/components/ui/badge';
 import { TiltCard } from '@/components/site/motion-components';
 
 export function FeaturedWork({ projects = defaultGetFeaturedProjects() }: { projects?: any[] }) {
@@ -34,40 +33,51 @@ export function FeaturedWork({ projects = defaultGetFeaturedProjects() }: { proj
           </Link>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
           {projects.map((project, i) => (
             <Reveal key={project.slug} delay={i * 0.1}>
-              <TiltCard className="h-full rounded-2xl">
+              <TiltCard maxRotate={5} className="h-full rounded-2xl">
                 <Link
                   href={`/work/${project.slug}`}
-                  className="group relative block overflow-hidden rounded-2xl border border-border bg-card h-full transition-all duration-300 hover:border-accent/30 hover:shadow-xl hover:shadow-accent/5"
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-[border-color,box-shadow] duration-500 hover:border-accent/40 hover:shadow-[0_24px_60px_-24px_hsl(var(--accent)/0.4)]"
                 >
+                  {/* Media plate */}
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Image
                       src={project.cover}
                       alt={project.title}
                       fill
                       sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent opacity-60 transition-opacity group-hover:opacity-80" />
-                    <div className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 text-foreground opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 scale-90">
-                      <ArrowUpRight className="h-5 w-5" />
-                    </div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <div className="mb-3 flex items-center gap-2">
-                      <Badge variant="secondary" className="bg-background/80 backdrop-blur">
+                    {/* Legibility scrim behind the meta only */}
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
+
+                    {/* Category + year */}
+                    <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 p-4 sm:p-5">
+                      <span className="rounded-full border border-white/20 bg-black/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
                         {project.category}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
+                      </span>
+                      <span className="font-display text-sm font-semibold tabular-nums text-white/85">
                         {project.year}
                       </span>
                     </div>
-                    <h3 className="font-display text-2xl font-semibold tracking-tight text-foreground">
+
+                    {/* Reveal arrow */}
+                    <div className="absolute bottom-4 right-4 flex h-11 w-11 translate-y-2 items-center justify-center rounded-full bg-accent text-accent-foreground opacity-0 shadow-lg shadow-accent/30 transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                      <ArrowUpRight className="h-5 w-5 transition-transform duration-500 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </div>
+                  </div>
+
+                  {/* Body */}
+                  <div className="flex flex-1 flex-col gap-3 p-6 sm:p-7">
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                      {project.client}
+                    </span>
+                    <h3 className="font-display text-xl font-semibold leading-snug tracking-tight text-foreground transition-colors duration-300 group-hover:text-accent sm:text-2xl">
                       {project.title}
                     </h3>
-                    <p className="mt-2 max-w-md text-sm text-muted-foreground opacity-0 transition-all duration-300 group-hover:opacity-100">
+                    <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                       {project.excerpt}
                     </p>
                   </div>
