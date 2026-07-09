@@ -9,7 +9,6 @@ import { Section, SectionHeader } from '@/components/site/section';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/site/reveal';
-import { cn } from '@/lib/utils';
 
 
 
@@ -166,10 +165,7 @@ export default async function CaseStudyPage({
                   {project.gallery.map((img: string, i: number) => (
                     <Reveal key={i} delay={i * 0.1}>
                       <div
-                        className={cn(
-                          'group relative overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg',
-                          i === 0 ? 'sm:col-span-2 aspect-[16/10]' : 'aspect-[4/3]'
-                        )}
+                        className="group relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                       >
                         <Image
                           src={img}

@@ -1,13 +1,12 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/site/container';
+import { NotFoundLottie } from '@/components/site/not-found-lottie';
 
 export default function NotFound() {
   return (
     <Container className="flex min-h-[80vh] flex-col items-center justify-center gap-6 text-center pt-32 pb-16 sm:pt-40 sm:pb-20">
-      <span className="font-display text-8xl font-bold text-accent/20 sm:text-9xl">
-        404
-      </span>
+      <NotFoundLottie />
       <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
         This page took a wrong turn
       </h1>
