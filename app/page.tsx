@@ -45,7 +45,7 @@ export default async function HomePage() {
       <Stats stats={stats} />
       <Testimonials testimonials={testimonials} />
       <FaqSection faqs={faqs} />
-      <ContactSection />
+      <ContactSection siteConfig={config} />
     </>
   );
 }

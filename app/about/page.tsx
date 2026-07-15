@@ -162,7 +162,7 @@ export default async function AboutPage() {
       </Section>
 
 
-      <ContactSection />
+      <ContactSection siteConfig={config} />
     </>
   );
 }

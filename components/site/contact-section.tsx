@@ -1,39 +1,39 @@
 import { Mail, Phone, MapPin, Calendar, Twitter, Instagram, Linkedin, Dribbble } from 'lucide-react';
-import { siteConfig } from '@/lib/site';
+import { siteConfig as defaultSiteConfig } from '@/lib/site';
 import { ContactForm } from '@/components/site/contact-form';
 import { Reveal } from '@/components/site/reveal';
 import { Container } from '@/components/site/container';
 import { Button } from '@/components/ui/button';
 import { SectionHeader } from '@/components/site/section';
 
-const contactInfo = [
-  {
-    icon: Mail,
-    label: 'Email',
-    value: siteConfig.email,
-    href: `mailto:${siteConfig.email}`,
-  },
-  {
-    icon: Phone,
-    label: 'Phone',
-    value: siteConfig.phone,
-    href: `tel:${siteConfig.phone}`,
-  },
-  {
-    icon: MapPin,
-    label: 'Studio',
-    value: siteConfig.address,
-  },
-];
+export function ContactSection({ siteConfig = defaultSiteConfig }: { siteConfig?: any }) {
+  const contactInfo = [
+    {
+      icon: Mail,
+      label: 'Email',
+      value: siteConfig.email,
+      href: `mailto:${siteConfig.email}`,
+    },
+    {
+      icon: Phone,
+      label: 'Phone',
+      value: siteConfig.phone,
+      href: `tel:${siteConfig.phone}`,
+    },
+    {
+      icon: MapPin,
+      label: 'Studio',
+      value: siteConfig.address,
+    },
+  ];
 
-const socials = [
-  { icon: Twitter, href: siteConfig.social.twitter, label: 'Twitter' },
-  { icon: Instagram, href: siteConfig.social.instagram, label: 'Instagram' },
-  { icon: Linkedin, href: siteConfig.social.linkedin, label: 'LinkedIn' },
-  { icon: Dribbble, href: siteConfig.social.dribbble, label: 'Dribbble' },
-];
+  const socials = [
+    { icon: Twitter, href: siteConfig.social?.twitter, label: 'Twitter' },
+    { icon: Instagram, href: siteConfig.social?.instagram, label: 'Instagram' },
+    { icon: Linkedin, href: siteConfig.social?.linkedin, label: 'LinkedIn' },
+    { icon: Dribbble, href: siteConfig.social?.dribbble, label: 'Dribbble' },
+  ].filter((s) => s.href);
 
-export function ContactSection() {
   return (
     <section id="contact" className="relative overflow-hidden border-t border-border grain">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-mesh-dark dark:opacity-100 opacity-60" />
