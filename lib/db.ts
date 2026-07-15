@@ -172,41 +172,42 @@ export async function getServices() {
     const items = await db.collection('services').find({}).toArray();
     if (items.length === 0) {
       // Seed initial data (mapping icon functions to strings)
-      const initial = services.map(s => {
-        let iconName = 'Palette';
-        if (s.slug === 'brand-strategy') iconName = 'Palette';
-        else if (s.slug === 'web-design') iconName = 'MonitorSmartphone';
-        else if (s.slug === 'product-design') iconName = 'Code2';
-        else if (s.slug === 'launch-sprint') iconName = 'Rocket';
-        else if (s.slug === 'growth-design') iconName = 'LineChart';
-        else if (s.slug === 'motion-brand') iconName = 'Sparkles';
-        return {
-          slug: s.slug,
-          title: s.title,
-          short: s.short,
-          description: s.description,
-          icon: iconName,
-          deliverables: s.deliverables,
-          startingPrice: s.startingPrice
-        };
-      });
+      const initial = services.map(s => ({
+        slug: s.slug,
+        title: s.title,
+        short: s.short,
+        description: s.description,
+        icon: serviceIconName(s.slug),
+        deliverables: s.deliverables,
+        startingPrice: s.startingPrice
+      }));
       await db.collection('services').insertMany(initial);
       return serialize(initial);
     }
     return serialize(items);
   } catch (error) {
     console.warn('MongoDB services read failed, falling back to static content:', error);
-    return serialize(services.map(s => {
-      let iconName = 'Palette';
-      if (s.slug === 'brand-strategy') iconName = 'Palette';
-      else if (s.slug === 'web-design') iconName = 'MonitorSmartphone';
-      else if (s.slug === 'product-design') iconName = 'Code2';
-      else if (s.slug === 'launch-sprint') iconName = 'Rocket';
-      else if (s.slug === 'growth-design') iconName = 'LineChart';
-      else if (s.slug === 'motion-brand') iconName = 'Sparkles';
-      return { ...s, icon: iconName };
-    }));
+    return serialize(services.map(s => ({ ...s, icon: serviceIconName(s.slug) })));
   }
+}
+
+const SERVICE_ICONS: Record<string, string> = {
+  'brand-strategy': 'Palette',
+  'web-design': 'MonitorSmartphone',
+  'product-design': 'Code2',
+  'launch-sprint': 'Rocket',
+  'growth-design': 'LineChart',
+  'motion-brand': 'Sparkles',
+  'website-development': 'Globe',
+  'ecommerce-development': 'ShoppingCart',
+  'custom-business-software': 'Building2',
+  'ui-ux-design': 'PenTool',
+  'seo-optimization': 'Search',
+  'automation-ai-solutions': 'Bot',
+};
+
+function serviceIconName(slug: string): string {
+  return SERVICE_ICONS[slug] ?? 'Palette';
 }
 
 export async function saveServices(items: any[]) {

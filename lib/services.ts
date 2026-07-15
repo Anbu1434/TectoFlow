@@ -5,6 +5,12 @@ import {
   LineChart,
   Sparkles,
   Code2,
+  Globe,
+  ShoppingCart,
+  Building2,
+  PenTool,
+  Search,
+  Bot,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -108,6 +114,96 @@ export const services: Service[] = [
       'Social cutdowns & templates',
     ],
     startingPrice: '$20k',
+  },
+  {
+    slug: 'website-development',
+    title: 'Website Development',
+    short: 'Fast, responsive, SEO-ready websites built on modern frameworks that scale with you.',
+    description:
+      'We design and build production-grade websites — marketing sites, portfolios, and content platforms — engineered for speed, accessibility, and easy content updates. Clean code, modern stack, and a foundation your team can grow on.',
+    icon: Globe,
+    deliverables: [
+      'Responsive multi-page build',
+      'Modern framework (Next.js / React)',
+      'CMS integration',
+      'Performance & SEO baseline',
+    ],
+    startingPrice: '$15k',
+  },
+  {
+    slug: 'ecommerce-development',
+    title: 'E-commerce Development',
+    short: 'Conversion-focused online stores with secure checkout, payments, and inventory built in.',
+    description:
+      'Full e-commerce builds that sell. From storefront design to payment gateways, inventory, and order flows, we ship fast, secure stores on platforms like Shopify or custom stacks — optimized for conversion at every step.',
+    icon: ShoppingCart,
+    deliverables: [
+      'Storefront design & build',
+      'Payment gateway integration',
+      'Inventory & order management',
+      'Checkout conversion optimization',
+    ],
+    startingPrice: '$28k',
+  },
+  {
+    slug: 'custom-business-software',
+    title: 'Custom Business Software',
+    short: 'Tailored internal tools, dashboards, and platforms that fit how your business actually runs.',
+    description:
+      'Off-the-shelf tools rarely fit. We build custom software — internal dashboards, CRMs, workflow tools, and platforms — around your real processes, so your team spends less time fighting software and more time doing the work.',
+    icon: Building2,
+    deliverables: [
+      'Requirements & workflow mapping',
+      'Custom application build',
+      'API & database architecture',
+      'Deployment & maintenance plan',
+    ],
+    startingPrice: '$40k',
+  },
+  {
+    slug: 'ui-ux-design',
+    title: 'UI/UX Design',
+    short: 'User-centered interface and experience design that makes products intuitive and delightful.',
+    description:
+      'We design interfaces people love to use. From research and wireframes to polished, high-fidelity UI and interactive prototypes, we balance usability and craft so every screen feels clear, considered, and on-brand.',
+    icon: PenTool,
+    deliverables: [
+      'UX research & wireframes',
+      'High-fidelity UI design',
+      'Interactive prototypes',
+      'Design system & handoff',
+    ],
+    startingPrice: '$18k',
+  },
+  {
+    slug: 'seo-optimization',
+    title: 'SEO & Optimization',
+    short: 'Technical SEO, performance tuning, and content strategy that grow organic traffic.',
+    description:
+      'We help you rank and load fast. Technical SEO audits, on-page optimization, Core Web Vitals tuning, and content strategy — a data-driven program that turns search visibility into steady, compounding growth.',
+    icon: Search,
+    deliverables: [
+      'Technical SEO audit',
+      'On-page & content optimization',
+      'Core Web Vitals tuning',
+      'Ranking & traffic reporting',
+    ],
+    startingPrice: '$8k/mo',
+  },
+  {
+    slug: 'automation-ai-solutions',
+    title: 'Automation & AI Solutions',
+    short: 'AI-powered workflows, chatbots, and automations that cut manual work and scale your team.',
+    description:
+      'We put AI to work on real problems. From workflow automation and integrations to custom chatbots and LLM-powered features, we build practical solutions that remove busywork and give your team leverage.',
+    icon: Bot,
+    deliverables: [
+      'Workflow automation setup',
+      'AI / LLM feature integration',
+      'Custom chatbot & assistant',
+      'Monitoring & optimization',
+    ],
+    startingPrice: '$22k',
   },
 ];
 
