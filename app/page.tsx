@@ -18,6 +18,9 @@ import {
 const Stats = dynamic(() => import('@/components/site/stats'));
 const Testimonials = dynamic(() => import('@/components/site/testimonials'));
 
+// DB-driven, admin-editable content — render per request so updates show without rebuild
+export const revalidate = 0;
+
 
 
 
