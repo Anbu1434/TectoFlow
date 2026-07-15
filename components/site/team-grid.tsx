@@ -114,7 +114,7 @@ function TeamCard({ member }: { member: TeamMember }) {
 
 export function TeamGrid({ teamMembers = defaultTeam }: { teamMembers?: TeamMember[] }) {
   return (
-    <StaggerGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 max-w-4xl mx-auto">
+    <StaggerGroup className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-2 max-w-4xl mx-auto">
       {teamMembers.map((member) => (
         <StaggerItem key={member.name} className="w-full">
           <TeamCard member={member} />
