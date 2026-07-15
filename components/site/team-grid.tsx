@@ -27,7 +27,7 @@ function SocialLink({
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/60 text-muted-foreground transition-all duration-300 hover:scale-110 hover:border-accent hover:bg-accent hover:text-accent-foreground"
+      className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-accent hover:bg-accent hover:text-accent-foreground shadow-md hover:shadow-accent/20"
     >
       {children}
     </a>
@@ -37,56 +37,74 @@ function SocialLink({
 function TeamCard({ member }: { member: TeamMember }) {
   const { social } = member;
   return (
-    <TiltCard className="h-full rounded-2xl">
-      <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card ring-1 ring-transparent transition-all duration-500 hover:border-accent/40 hover:ring-accent/30 hover:shadow-2xl hover:shadow-accent/10">
-        {/* Photo — fully visible */}
-        <div className="relative aspect-[4/3] overflow-hidden">
+    <TiltCard className="h-full rounded-3xl">
+      <div className="group relative w-full aspect-[4/5] sm:aspect-[3/4] overflow-hidden rounded-3xl border border-border bg-card transition-all duration-500 hover:border-accent/30 hover:shadow-[0_0_50px_-12px_rgba(249,115,22,0.15)] ring-1 ring-transparent hover:ring-accent/20">
+        {/* Photo Container */}
+        <div className="absolute inset-0 z-0">
           <Image
             src={member.image}
             alt={member.name}
-            width={400}
-            height={300}
-            className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.05]"
+            fill
+            sizes="(max-width: 768px) 100vw, 450px"
+            className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+            priority
           />
+          {/* Base gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-neutral-950/10 transition-opacity duration-500 group-hover:opacity-90" />
+          
+          {/* Ambient hover glow */}
+          <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-accent/20 blur-[60px] opacity-0 transition-opacity duration-700 group-hover:opacity-100 pointer-events-none" />
         </div>
 
-        {/* Content */}
-        <div className="flex flex-1 flex-col gap-2 p-5">
-          <div>
-            <h3 className="font-display text-lg font-semibold tracking-tight text-foreground">
+        {/* Info overlay (always at bottom) */}
+        <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col p-6 text-white justify-end bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+          {/* Role badge and Name */}
+          <div className="transform translate-y-0 transition-transform duration-500 ease-out group-hover:-translate-y-1">
+            <span className="inline-block text-[10px] font-semibold uppercase tracking-widest text-accent mb-2 bg-accent/15 border border-accent/30 px-2.5 py-0.5 rounded-full backdrop-blur-md">
+              {member.role}
+            </span>
+            <h3 className="font-display text-2xl font-bold tracking-tight text-white drop-shadow-md">
               {member.name}
             </h3>
-            <p className="text-sm font-medium text-accent">{member.role}</p>
           </div>
-          <p className="text-sm text-muted-foreground line-clamp-3">{member.bio}</p>
 
-          {/* Social row — always visible */}
-          <div className="mt-auto flex items-center gap-2 pt-3">
-            {social.whatsapp && (
-              <SocialLink href={social.whatsapp} label={`${member.name} on WhatsApp`} external>
-                <WhatsAppIcon className="h-4 w-4" />
-              </SocialLink>
-            )}
-            {social.phone && (
-              <SocialLink href={social.phone} label={`${member.name} Phone`}>
-                <Phone className="h-4 w-4" />
-              </SocialLink>
-            )}
-            {social.twitter && (
-              <SocialLink href={social.twitter} label={`${member.name} on Twitter`} external>
-                <Twitter className="h-4 w-4" />
-              </SocialLink>
-            )}
-            {social.linkedin && (
-              <SocialLink href={social.linkedin} label={`${member.name} on LinkedIn`} external>
-                <Linkedin className="h-4 w-4" />
-              </SocialLink>
-            )}
-            {social.dribbble && (
-              <SocialLink href={social.dribbble} label={`${member.name} on Dribbble`} external>
-                <Dribbble className="h-4 w-4" />
-              </SocialLink>
-            )}
+          {/* Slide-up drawer for details */}
+          <div className="grid grid-rows-[0fr] opacity-0 group-hover:grid-rows-[1fr] group-hover:opacity-100 transition-all duration-500 ease-out">
+            <div className="overflow-hidden">
+              {/* Bio description */}
+              <p className="text-sm text-neutral-300 leading-relaxed pt-3 border-t border-white/10 mt-3 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-75 ease-out">
+                {member.bio}
+              </p>
+
+              {/* Social icons row */}
+              <div className="mt-4 flex items-center gap-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-150 ease-out">
+                {social.whatsapp && (
+                  <SocialLink href={social.whatsapp} label={`${member.name} on WhatsApp`} external>
+                    <WhatsAppIcon className="h-4 w-4" />
+                  </SocialLink>
+                )}
+                {social.phone && (
+                  <SocialLink href={social.phone} label={`${member.name} Phone`}>
+                    <Phone className="h-4 w-4" />
+                  </SocialLink>
+                )}
+                {social.twitter && (
+                  <SocialLink href={social.twitter} label={`${member.name} on Twitter`} external>
+                    <Twitter className="h-4 w-4" />
+                  </SocialLink>
+                )}
+                {social.linkedin && (
+                  <SocialLink href={social.linkedin} label={`${member.name} on LinkedIn`} external>
+                    <Linkedin className="h-4 w-4" />
+                  </SocialLink>
+                )}
+                {social.dribbble && (
+                  <SocialLink href={social.dribbble} label={`${member.name} on Dribbble`} external>
+                    <Dribbble className="h-4 w-4" />
+                  </SocialLink>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
