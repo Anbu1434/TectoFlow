@@ -37,7 +37,7 @@ function SocialLink({
 function TeamCard({ member }: { member: TeamMember }) {
   const { social } = member;
   return (
-    <TiltCard className="h-full rounded-3xl">
+    <TiltCard className="w-full h-full rounded-3xl">
       <div className="group relative w-full h-[420px] sm:h-[480px] overflow-hidden rounded-3xl border border-border bg-card transition-all duration-500 hover:border-accent/30 hover:shadow-[0_0_50px_-12px_rgba(249,115,22,0.15)] ring-1 ring-transparent hover:ring-accent/20">
         {/* Photo Container */}
         <div className="absolute inset-0 z-0">
@@ -116,7 +116,7 @@ export function TeamGrid({ teamMembers = defaultTeam }: { teamMembers?: TeamMemb
   return (
     <StaggerGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 max-w-4xl mx-auto">
       {teamMembers.map((member) => (
-        <StaggerItem key={member.name}>
+        <StaggerItem key={member.name} className="w-full">
           <TeamCard member={member} />
         </StaggerItem>
       ))}
