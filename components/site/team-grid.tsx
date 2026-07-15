@@ -38,7 +38,7 @@ function TeamCard({ member }: { member: TeamMember }) {
   const { social } = member;
   return (
     <TiltCard className="h-full rounded-3xl">
-      <div className="group relative w-full aspect-[4/5] sm:aspect-[3/4] overflow-hidden rounded-3xl border border-border bg-card transition-all duration-500 hover:border-accent/30 hover:shadow-[0_0_50px_-12px_rgba(249,115,22,0.15)] ring-1 ring-transparent hover:ring-accent/20">
+      <div className="group relative w-full h-[420px] sm:h-[480px] overflow-hidden rounded-3xl border border-border bg-card transition-all duration-500 hover:border-accent/30 hover:shadow-[0_0_50px_-12px_rgba(249,115,22,0.15)] ring-1 ring-transparent hover:ring-accent/20">
         {/* Photo Container */}
         <div className="absolute inset-0 z-0">
           <Image
